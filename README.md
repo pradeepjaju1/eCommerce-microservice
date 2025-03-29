@@ -1,16 +1,58 @@
 # eCommerce-microservice
-graph TD
-  A[Client (Browser)] --> B[GCP HTTP(S) Load Balancer]
-  B --> C[API Gateway / Ingress]
-  C --> D[User Service (Cloud Run/GKE)]
-  C --> E[Product Service (Cloud Run/GKE)]
-  C --> F[Order Service (Cloud Run/GKE)]
-  D --> G[Cloud SQL / Firestore<br/>(User Data)]
-  E --> H[Firestore / Cloud SQL<br/>(Product Data)]
-  F --> I[Cloud SQL / Firestore<br/>(Order Data)]
-  D --- J[Google Cloud Pub/Sub]
-  E --- J
-  F --- J
-  J --> K[Google Cloud Operations<br/>(Monitoring & Logging)]
-  A --> L[Static Frontend<br/>(Cloud Storage)]
 
+                     +----------------------+
+                     |  Client (Browser)    |
+                     |    (e.g., Chrome)    |
+                     +----------+-----------+
+                                │
+                                ▼
+                     +----------------------+
+                     | GCP HTTP(S) Load     |
+                     |    Balancer          |
+                     | (SSL Termination &   |
+                     |  Global Routing)     |
+                     +----------+-----------+
+                                │
+                                ▼
+                     +----------------------+
+                     |  API Gateway /       |
+                     |  Ingress Controller  |
+                     |   (e.g., NGINX,      |
+                     |  Apigee, Cloud       |
+                     |  Endpoints)          |
+                     +----------+-----------+
+                                │
+              +-----------------+-----------------+
+              │                 │                 │
+              ▼                 ▼                 ▼
+     +----------------+  +----------------+  +----------------+
+     |  User Service  |  | Product Service|  | Order Service  |
+     | (Cloud Run or  |  | (Cloud Run or  |  | (Cloud Run or  |
+     |      GKE)      |  |      GKE)      |  |      GKE)      |
+     +----------------+  +----------------+  +----------------+
+              │                 │                 │
+              ▼                 ▼                 ▼
+     +----------------+  +----------------+  +----------------+
+     | Cloud SQL /    |  | Firestore/     |  | Cloud SQL /    |
+     | Firestore      |  | Cloud SQL      |  | Firestore      |
+     |  (User Data)   |  | (Product Data) |  |  (Order Data)  |
+     +----------------+  +----------------+  +----------------+
+                                │
+                                ▼
+                     +----------------------+
+                     | Google Cloud Pub/Sub |
+                     | (Event Messaging)    |
+                     +----------+-----------+
+                                │
+                                ▼
+                     +----------------------+
+                     | Google Cloud Ops     |
+                     | (Monitoring &        |
+                     |  Logging)            |
+                     +----------------------+
+
+                     +----------------------+
+                     | Static Frontend      |
+                     | (Cloud Storage:      |
+                     |  HTML/CSS/JS Assets) |
+                     +----------------------+
