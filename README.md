@@ -1,56 +1,62 @@
-                          +------------------------+
-                          |   Client (Browser)     |
-                          |   e.g., Chrome, Mobile |
-                          +-----------+------------+
-                                      │
-                                      ▼
-                          +------------------------+
-                          |  GCP HTTP(S) Load      |
-                          |     Balancer           |
-                          | (SSL Termination,      |
-                          | Global Traffic Routing)|
-                          +-----------+------------+
-                                      │
-                                      ▼
-                          +------------------------+
-                          | Kubernetes Ingress     |
-                          | Controller (NGINX,     |
-                          |   Apigee, Cloud        |
-                          |   Endpoints)           |
-                          +-----------+------------+
-                                      │
-           ┌──────────────────────────┼────────────────────────────┐
-           │                          │                            │
-           ▼                          ▼                            ▼
- +-----------------+         +-------------------+         +-----------------+
- | User Service    |         | Product Service   |         | Order Service   |
- | (GKE Pods)      |         | (GKE Pods)        |         | (GKE Pods)      |
- |  Replicas: 5    |         |  Replicas: 5      |         |  Replicas: 5    |
- +-------+---------+         +---------+---------+         +-------+---------+
-         │                             │                           │
-         ▼                             ▼                           ▼
-+-----------------+         +-------------------+         +-----------------+
-| Cloud SQL or    |         | Firestore /       |         | Cloud SQL or    |
-| Firestore       |         | Cloud SQL         |         | Firestore       |
-| (User Data)     |         | (Product Data)    |         | (Order Data)    |
-+-----------------+         +-------------------+         +-----------------+
-                                      │
-                                      ▼
-                          +------------------------+
-                          | Google Cloud Pub/Sub   |
-                          | (Event-Driven Messaging|
-                          |  for Async Processes)  |
-                          +-----------+------------+
-                                      │
-                                      ▼
-                          +------------------------+
-                          | Google Cloud Ops       |
-                          | (Monitoring, Logging,  |
-                          |  Alerting & Tracing)   |
-                          +------------------------+
+                   +----------------------+
+                   |  Client (Browser)    |
+                   |  (e.g., Chrome)      |
+                   +----------+-----------+
+                              │
+                              ▼
+                   +----------------------+
+                   | GCP HTTP(S) Load     |
+                   | Balancer             |
+                   | (SSL, Routing)       |
+                   +----------+-----------+
+                              │
+                              ▼
+                   +----------------------+
+                   | Kubernetes Ingress   |
+                   | Controller           |
+                   | (NGINX / Endpoints)  |
+                   +----------+-----------+
+                              │
+           ┌──────────────────┴──────────────────┐
+           │                                     │
+           ▼                                     ▼
++--------------------+                 +---------------------+
+|  User Service      |                 |  Product Service    |
+|  (GKE Pods, 5x)    |                 |  (GKE Pods, 5x)     |
++---------+----------+                 +---------+-----------+
+          │                                      │
+          ▼                                      ▼
++--------------------+                 +---------------------+
+| Cloud SQL /        |                 | Firestore /         |
+| Firestore (User)   |                 | Cloud SQL (Product) |
++---------+----------+                 +---------+-----------+
+           └──────────────────┬──────────────────┘
+                              ▼
+                   +----------------------+
+                   | Order Service        |
+                   | (GKE Pods, 5x)       |
+                   +----------+-----------+
+                              │
+                              ▼
+                   +----------------------+
+                   | Cloud SQL / Firestore|
+                   | (Order Data)         |
+                   +----------+-----------+
+                              │
+                              ▼
+                   +----------------------+
+                   | Google Cloud Pub/Sub |
+                   | (Event Messaging)    |
+                   +----------+-----------+
+                              │
+                              ▼
+                   +----------------------+
+                   | Google Cloud Ops     |
+                   | (Monitoring & Logging)|
+                   +----------------------+
 
-                +-------------------------+
-                | Static Frontend         |
-                | (Hosted on Cloud Storage|
-                |  - HTML/CSS/JS Assets)  |
-                +-------------------------+
+                   +----------------------+
+                   | Static Frontend      |
+                   | (Cloud Storage)      |
+                   |  HTML/CSS/JS Assets  |
+                   +----------------------+
